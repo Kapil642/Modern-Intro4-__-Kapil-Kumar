@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Modern Intro — Kapil Kumar</title>
+
+  <!-- AOS & GSAP -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    /* --- Reset & base --- */
+    :root{--bg:#f5f7fb;--card:#ffffff;--muted:#6b7280;--accent:#0071e3;--glass:rgba(15,23,42,0.04)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:#0f1724}
+    body{background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    a{color:inherit}
+
+    /* --- Preloader --- */
+    #preloader{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#fff;z-index:9999}
+    .pre-wrap{display:flex;gap:12px;align-items:center}
+    .pre-dot{width:12px;height:12px;border-radius:50%;background:var(--accent);animation:pre 900ms infinite ease-in-out}
+    .pre-dot:nth-child(2){animation-delay:120ms}.pre-dot:nth-child(3){animation-delay:240ms}
+    @keyframes pre{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+
+    /* --- NAV --- */
+    .nav{position:fixed;left:0;right:0;top:0;height:74px;display:flex;align-items:center;justify-content:space-between;padding:18px 36px;z-index:90;background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.6));backdrop-filter:blur(6px);box-shadow:0 6px 18px rgba(15,23,42,0.04)}
+    .brand{font-weight:700;font-size:18px;letter-spacing:.2px}
+    .nav-links{display:flex;gap:22px;align-items:center;list-style:none}
+    .nav-links a{font-weight:500;color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:9px;transition:all .18s}
+    .nav-links a:hover{color:#000;background:var(--glass)}
+    .nav-cta{padding:8px 14px;background:var(--accent);color:#fff;border-radius:10px;border:none;cursor:pointer}
+
+    /* Hamburger */
+    .hamburger{display:none;flex-direction:column;gap:6px;cursor:pointer}
+    .hamburger span{width:26px;height:3px;background:#111;border-radius:3px;transition:all .35s}
+    .hamburger.active span:nth-child(1){transform:rotate(45deg) translate(4px,4px)}
+    .hamburger.active span:nth-child(2){opacity:0}
+    .hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px)}
+
+    /* Mobile menu drop */
+    .mobile-menu{position:absolute;left:0;right:0;top:74px;background:var(--card);padding:18px 24px;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;flex-direction:column;gap:12px;max-height:0;overflow:hidden;transition:max-height .36s ease}
+    .mobile-menu.open{max-height:280px}
+
+    /* --- HERO (Apple-like) --- */
+    header{min-height:88vh;display:flex;align-items:center;justify-content:center;padding:120px 24px 60px}
+    .hero{width:100%;max-width:1200px;display:grid;grid-template-columns:1fr 460px;gap:48px;align-items:center}
+    .hero-left{padding-right:8px}
+    .eyebrow{font-size:13px;color:var(--muted);margin-bottom:12px}
+    .title{font-size:48px;line-height:1.02;color:#041426;margin-bottom:12px;font-weight:700}
+    .title .accent{color:var(--accent)}
+    .lead{color:var(--muted);font-size:17px;margin-bottom:24px}
+    .actions{display:flex;gap:12px}
+    .btn.primary{background:#111;color:#fff;padding:12px 16px;border-radius:12px;border:none;cursor:pointer;font-weight:600}
+    .btn.ghost{background:transparent;border:1px solid rgba(15,23,42,0.06);padding:12px 16px;border-radius:12px;cursor:pointer}
+
+    .hero-card{background:linear-gradient(180deg, #fff, #fbfdff);border-radius:18px;padding:12px;box-shadow:0 30px 60px rgba(12,22,40,0.08)}
+    .hero-media{border-radius:14px;overflow:hidden}
+    .hero-media img{display:block;width:100%;height:100%;object-fit:cover}
+
+    /* --- Grid sections --- */
+    .section{padding:80px 20px;max-width:1100px;margin:0 auto}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 12px 30px rgba(15,23,42,0.04)}
+    .card h3{margin-bottom:8px}
+
+    /* --- Footer --- */
+    footer{padding:48px 20px;text-align:center;color:var(--muted)}
+
+    /* --- Scroll to top --- */
+    #topBtn{position:fixed;right:18px;bottom:18px;background:var(--accent);color:#fff;border:none;border-radius:50%;width:44px;height:44px;display:none;align-items:center;justify-content:center;cursor:pointer}
+    #topBtn.show{display:flex}
+
+    /* --- Responsiveness --- */
+    @media(max-width:1080px){.hero{grid-template-columns:1fr 380px}.title{font-size:42px}}
+    @media(max-width:880px){.nav-links{display:none}.hamburger{display:flex}.hero{grid-template-columns:1fr}.hero-media img{height:500px}}
+    @media(max-width:680px){.title{font-size:32px}.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+  <!-- preloader -->
+  <div id="preloader" role="status" aria-live="polite">
+    <div class="pre-wrap" aria-hidden="true">
+      <div class="pre-dot"></div>
+      <div class="pre-dot"></div>
+      <div class="pre-dot"></div>
+    </div>
+  </div>
+
+  <!-- nav -->
+  <nav class="nav" role="navigation">
+    <div class="brand">Kapil Kumar</div>
+
+    <ul class="nav-links" role="menubar">
+      <li role="none"><a role="menuitem" href="#home">Home</a></li>
+      <li role="none"><a role="menuitem" href="#about">About</a></li>
+      <li role="none"><a role="menuitem" href="#work">Work</a></li>
+      <li role="none"><a role="menuitem" href="#contact">Contact</a></li>
+    </ul>
+
+    <div style="display:flex;align-items:center;gap:14px">
+      <button class="nav-cta">Contact</button>
+      <div class="hamburger" aria-label="Open menu" role="button" tabindex="0" onclick="toggleMobile()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <a href="#home" onclick="closeMobile()">Home</a>
+      <a href="#about" onclick="closeMobile()">About</a>
+      <a href="#work" onclick="closeMobile()">Work</a>
+      <a href="#contact" onclick="closeMobile()">Contact</a>
+    </div>
+  </nav>
+
+  <!-- hero -->
+  <header id="home">
+    <div class="hero" data-aos="fade-up" data-aos-duration="900">
+      <div class="hero-left">
+        <div class="eyebrow">Introducing</div>
+        <h1 class="title">Beautiful interfaces for<br><span class="accent">people</span> and products</h1>
+        <p class="lead">I craft modern, accessible and high-performance experiences — with attention to motion, micro-interactions and details that matter.</p>
+
+        <div class="actions">
+          <button class="btn primary">Work with me</button>
+          <button class="btn ghost">See case studies</button>
+        </div>
+
+        <div style="margin-top:22px;color:var(--muted);font-size:15px">I’m <strong id="name">Kapil</strong> — <span id="typed" style="color:var(--accent);font-weight:600"></span></div>
+      </div>
+
+      <div class="hero-card">
+        <div class="hero-media" data-aos="zoom-in" data-aos-delay="120">
+          <!-- Girls image (portrait) -->
+          <img src="New folder/4.jpg" alt="portrait">
+          <!-- <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="portrait"> -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- about/work -->
+  <section id="about" class="section">
+    <div class="grid">
+      <div class="card" data-aos="fade-up">
+        <h3>Design</h3>
+        <p>Visual systems, component libraries and pixel-perfect UI.</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="80">
+        <h3>Front-end</h3>
+        <p>Responsive, accessible and pragmatic code with performance in mind.</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="160">
+        <h3>Motion</h3>
+        <p>Micro-interactions and motion that guide attention and delight users.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="work" class="section">
+    <h2 style="margin-bottom:18px;color:#041426" data-aos="fade-right">Selected work</h2>
+    <div class="grid">
+      <div class="card" data-aos="zoom-in"><h3>Product landing</h3><p>Clean layout, strong hero and conversion-focused visuals.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="80"><h3>Portfolio</h3><p>Case studies, galleries and storytelling-focused pages.</p></div>
+      <div class="card" data-aos="zoom-in" data-aos-delay="160"><h3>Animation</h3><p>GSAP timelines and delightful motion.</p></div>
+    </div>
+  </section>
+
+  <section id="contact" class="section" style="padding-bottom:120px">
+    <h2 style="color:#041426" data-aos="fade-left">Let’s get in touch</h2>
+    <p data-aos="fade-up">Send a message, request a quote, or say hi — I typically respond within a day.</p>
+  </section>
+
+  <footer>
+    © <span id="year"></span> Kapil Kumar • ❤ • Crafted with care
+  </footer>
+
+  <button id="topBtn" aria-label="Back to top">↑</button>
+
+  <script>
+    // Init AOS
+    AOS.init({duration:700,once:true,easing:'ease-out-cubic'});
+
+    // Preloader
+    window.addEventListener('load', ()=>{
+      const pre = document.getElementById('preloader');
+      pre.style.opacity = '0'; pre.style.pointerEvents = 'none'; setTimeout(()=>pre.remove(),500);
+
+      // GSAP subtle entrance
+      gsap.from('.nav',{y:-20,opacity:0,duration:0.8,delay:0.1});
+      gsap.from('.title',{y:30,opacity:0,duration:1,delay:0.15,ease:'power3.out'});
+      gsap.from('.hero-media img',{scale:1.08,opacity:0,duration:1.1,delay:0.28,ease:'power3.out'});
+    });
+
+    // Typing animation (simple)
+    const words = ['UI Designer','Front-end Engineer','Product-minded','Motion Lover','More function coming soo.....n'];
+    let w = 0, i = 0, forward = true; const el = document.getElementById('typed');
+    function type(){
+      const word = words[w];
+      if(forward){ i++; el.textContent = word.substring(0,i); if(i === word.length){ forward=false; setTimeout(type,900); return }}
+      else{ i--; el.textContent = word.substring(0,i); if(i === 0){ forward=true; w = (w+1) % words.length; }}
+      setTimeout(type, forward?70:35);
+    }
+    type();
+
+    // Mobile menu
+    function toggleMobile(){
+      document.getElementById('mobileMenu').classList.toggle('open');
+      document.querySelector('.hamburger').classList.toggle('active');
+      const open = document.getElementById('mobileMenu').classList.contains('open');
+      document.getElementById('mobileMenu').setAttribute('aria-hidden', (!open).toString());
+    }
+    function closeMobile(){ document.getElementById('mobileMenu').classList.remove('open'); document.querySelector('.hamburger').classList.remove('active'); }
+    window.addEventListener('resize', ()=>{ if(window.innerWidth > 880) closeMobile(); });
+
+    // Smooth link scrolling
+    document.querySelectorAll('.nav-links a, .mobile-menu a').forEach(a=>{
+      a.addEventListener('click', e=>{
+        const href = a.getAttribute('href');
+        if(href && href.startsWith('#')){ e.preventDefault(); document.querySelector(href).scrollIntoView({behavior:'smooth',block:'start'}); closeMobile(); }
+      });
+    });
+
+    // Scroll to top
+    const topBtn = document.getElementById('topBtn');
+    window.addEventListener('scroll', ()=>{ if(window.scrollY > 360) topBtn.classList.add('show'); else topBtn.classList.remove('show'); });
+    topBtn.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
